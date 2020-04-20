@@ -3,11 +3,11 @@ version: '3.7'
 services:
   traefik:
     image: traefik:v2.2.0
-    command:
     networks:
       - inbound
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/static/new-traefik.toml:/etc/traefik/traefik.toml
     ports:
       - target: 80
         published: 80
@@ -29,3 +29,8 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+
+networks:
+  traefik:
+    driver: overlay
+    name: traefik
