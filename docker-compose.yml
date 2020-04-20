@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v1.7
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/traefik.toml:/etc/traefik/traefik.toml
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+      - target: 443
+        published: 443
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+networks:
+  traefik:
+    driver: overlay
+    name: traefik
